@@ -1,0 +1,242 @@
+@import "tailwindcss";
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Custom prose styles for better readability */
+.prose {
+  color: inherit;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: inherit;
+}
+
+.prose code {
+  background-color: transparent;
+  padding: 0;
+  font-size: 0.875em;
+}
+
+.prose pre {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.dark .prose pre {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+/* Ensure proper dark mode colors */
+.dark {
+  color-scheme: dark;
+}
+
+/* Force background colors for light mode */
+body {
+  background-color: #f9fafb;
+}
+
+.dark body {
+  background-color: #111827;
+}
+
+.dark .prose {
+  color: #e5e7eb;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+  color: #f9fafb;
+}
+
+.dark .prose p {
+  color: #d1d5db;
+}
+
+.dark .prose strong {
+  color: #f9fafb;
+}
+
+.dark .prose em {
+  color: #d1d5db;
+}
+
+.dark .prose ul,
+.dark .prose ol {
+  color: #d1d5db;
+}
+
+.dark .prose li {
+  color: #d1d5db;
+}
+
+.dark .prose blockquote {
+  color: #d1d5db;
+}
+
+.dark .prose a {
+  color: #60a5fa;
+}
+
+.dark .prose a:hover {
+  color: #93c5fd;
+}
+
+/* Mermaid diagram styling */
+.mermaid-container {
+  margin: 1.5rem 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  scrollbar-width: thin; /* Firefox */
+  box-sizing: border-box;
+}
+
+.mermaid-container > div,
+.mermaid-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.mermaid-container svg {
+  max-width: none; /* Allow SVG to be wider than container */
+  width: auto;
+  height: auto;
+  min-width: 300px; /* Ensure minimum width for readability */
+  display: block;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .mermaid-container {
+    margin: 1rem 0;
+    padding: 0;
+    position: relative;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+  }
+
+  .mermaid-container::after {
+    content: "← Swipe to see more →";
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #6b7280;
+    opacity: 0.7;
+    z-index: 10;
+  }
+
+  .mermaid-container svg {
+    min-width: 250px;
+    font-size: 12px; /* Smaller text on mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .mermaid-container {
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+  }
+
+  .mermaid-container svg {
+    min-width: 200px;
+    font-size: 10px; /* Even smaller text on very small screens */
+  }
+}
+
+/* Ensure Mermaid diagrams respect theme */
+.dark .mermaid-container svg {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Fix text in inverted Mermaid diagrams */
+.dark .mermaid-container svg text {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Focus styles for accessibility */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Animation for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.dark .shimmer {
+  background: linear-gradient(90deg, #374151 25%, #4b5563 50%, #374151 75%);
+  background-size: 200px 100%;
+}
+
+/* Ensure sidebar is visible on desktop */
+@media (min-width: 1024px) {
+  .sidebar-desktop {
+    position: relative !important;
+    transform: translateX(0) !important;
+    z-index: auto !important;
+  }
+}
