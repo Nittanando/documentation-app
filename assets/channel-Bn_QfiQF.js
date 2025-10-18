@@ -1,0 +1,1 @@
+import{Gn as e,Wn as t}from"./index-CExtazMC.js";var n=(n,r)=>e.lang.round(t.parse(n)[r]);export{n as t};
