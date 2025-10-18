@@ -1,4 +1,4 @@
-# Dynamic Documentation App
+# Arcane
 
 A modern, dynamic documentation viewer built with React and Tailwind CSS v4 that automatically generates navigation from GitHub repository structures and renders markdown content with rich features.
 
@@ -28,7 +28,7 @@ A modern, dynamic documentation viewer built with React and Tailwind CSS v4 that
 
    ```bash
    git clone <repository-url>
-   cd documentation_app
+   cd arcane
    ```
 
 2. **Install dependencies**

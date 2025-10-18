@@ -121,7 +121,7 @@ function DynamicSidebar({ onItemClick, activePath, isOpen, onClose, repoUrl }) {
           x: isOpen ? 0 : -280,
         }}
         transition={{ type: "tween", duration: 0.3 }}
-        className={`fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-300 dark:border-gray-700 shadow-lg lg:shadow-xl z-50 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:translate-x-0 lg:z-auto lg:block sidebar-desktop`}
+        className={`fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-300 dark:border-gray-700 z-50 lg:sticky lg:top-16 lg:h-[calc(100vh-4rem)] lg:translate-x-0 lg:z-auto lg:block sidebar-desktop`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -185,9 +185,20 @@ function DynamicSidebar({ onItemClick, activePath, isOpen, onClose, repoUrl }) {
               <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <div className="w-4 h-4 text-red-500">⚠️</div>
-                  <p className="text-red-600 dark:text-red-400 text-sm">
-                    Error loading repository structure
-                  </p>
+                  <div className="flex-1">
+                    <p className="text-red-600 dark:text-red-400 text-sm font-medium">
+                      {error.includes("rate limit")
+                        ? "GitHub API Rate Limit Exceeded"
+                        : "Error loading repository structure"}
+                    </p>
+                    {error.includes("rate limit") && (
+                      <div className="mt-2 text-xs text-red-500 dark:text-red-400">
+                        <p>• Wait 5-10 minutes for the rate limit to reset</p>
+                        <p>• Or use a GitHub token for higher limits</p>
+                        <p>• Try refreshing the page in a few minutes</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ) : sidebarItems.length > 0 ? (

@@ -58,76 +58,61 @@ function processRepositoryToSidebar(structure) {
     });
   }
 
-  // Add learning-path.md if it exists
-  const learningPathFile = structure.files.find(
-    (file) => file.name.toLowerCase() === "learning-path.md"
-  );
+  // Build hierarchical structure from all directories and files
+  const directoryMap = new Map();
 
-  if (learningPathFile) {
-    items.push({
-      title: "Learning Path",
-      path: learningPathFile.path,
-      type: "file",
-      icon: "🗺️",
-    });
-  }
-
-  // Process modules (directories)
-  const modules = structure.modules
+  // First, create all directories
+  structure.modules
     .filter((module) => !isSystemDirectory(module.name))
-    .sort((a, b) => getModuleOrder(a.name) - getModuleOrder(b.name));
+    .forEach((module) => {
+      directoryMap.set(module.path, {
+        title: formatModuleTitle(module.name),
+        path: module.path,
+        type: "module",
+        icon: getModuleIcon(module.name),
+        children: [],
+        level: module.path.split("/").length - 1,
+      });
+    });
 
-  modules.forEach((module) => {
-    const moduleItem = {
-      title: formatModuleTitle(module.name),
-      path: module.path,
-      type: "module",
-      icon: getModuleIcon(module.name),
-      children: [],
-    };
-
-    // Add files within this module
-    const moduleFiles = structure.files
-      .filter((file) => file.path.startsWith(module.path + "/"))
-      .sort((a, b) => getFileOrder(a.name) - getFileOrder(b.name));
-
-    moduleFiles.forEach((file) => {
-      moduleItem.children.push({
+  // Then, add all markdown files to their respective directories
+  structure.files
+    .filter((file) => file.name.endsWith(".md")) // Only markdown files
+    .sort((a, b) => getFileOrder(a.name) - getFileOrder(b.name))
+    .forEach((file) => {
+      const fileItem = {
         title: formatFileName(file.name),
         path: file.path,
         type: "file",
         icon: getFileIcon(file.name),
-      });
+      };
+
+      // Find the appropriate directory for this file
+      const pathParts = file.path.split("/");
+      if (pathParts.length === 1) {
+        // Root level file
+        items.push(fileItem);
+      } else {
+        // File in a directory
+        const dirPath = pathParts.slice(0, -1).join("/");
+        const directory = directoryMap.get(dirPath);
+        if (directory) {
+          directory.children.push(fileItem);
+        }
+      }
     });
 
-    // Only add module if it has children or is important
-    if (moduleItem.children.length > 0 || isImportantModule(module.name)) {
-      items.push(moduleItem);
-    }
+  // Add directories to the sidebar, sorted by level and name
+  const sortedDirectories = Array.from(directoryMap.values()).sort((a, b) => {
+    if (a.level !== b.level) return a.level - b.level;
+    return a.title.localeCompare(b.title);
   });
 
-  // Add standalone files (not in modules)
-  const standaloneFiles = structure.files
-    .filter((file) => {
-      const isInModule = structure.modules.some((module) =>
-        file.path.startsWith(module.path + "/")
-      );
-      const isSpecialFile = [
-        "readme.md",
-        "learning-path.md",
-        "index.md",
-      ].includes(file.name.toLowerCase());
-      return !isInModule && !isSpecialFile;
-    })
-    .sort((a, b) => getFileOrder(a.name) - getFileOrder(b.name));
-
-  standaloneFiles.forEach((file) => {
-    items.push({
-      title: formatFileName(file.name),
-      path: file.path,
-      type: "file",
-      icon: getFileIcon(file.name),
-    });
+  // Only add directories that have markdown files
+  sortedDirectories.forEach((directory) => {
+    if (directory.children.length > 0) {
+      items.push(directory);
+    }
   });
 
   return items;
@@ -207,6 +192,16 @@ function getModuleIcon(name) {
     ops: "⚙️",
     exercises: "💪",
     nosql: "🗄️",
+    docs: "📚",
+    examples: "💡",
+    assets: "🎨",
+    components: "🧩",
+    pages: "📄",
+    utils: "🔧",
+    hooks: "🪝",
+    styles: "🎨",
+    public: "🌐",
+    src: "📦",
   };
   return icons[name.toLowerCase()] || "📁";
 }
@@ -215,12 +210,22 @@ function getFileIcon(name) {
   if (name.toLowerCase().includes("readme")) return "📖";
   if (name.toLowerCase().includes("learning")) return "🗺️";
   if (name.toLowerCase().includes("index")) return "📋";
+  if (name.toLowerCase().includes("introduction")) return "👋";
+  if (name.toLowerCase().includes("setup")) return "⚙️";
   if (name.toLowerCase().includes("installation")) return "⬇️";
   if (name.toLowerCase().includes("configuration")) return "⚙️";
   if (name.toLowerCase().includes("advanced")) return "⚡";
+  if (name.toLowerCase().includes("core")) return "🎯";
+  if (name.toLowerCase().includes("concepts")) return "💡";
+  if (name.toLowerCase().includes("features")) return "🚀";
+  if (name.toLowerCase().includes("examples")) return "💡";
+  if (name.toLowerCase().includes("practices")) return "✨";
+  if (name.toLowerCase().includes("migration")) return "🔄";
+  if (name.toLowerCase().includes("resources")) return "📚";
   if (name.toLowerCase().includes("api")) return "🔌";
-  if (name.toLowerCase().includes("example")) return "💡";
   if (name.toLowerCase().includes("exercise")) return "💪";
+  if (name.toLowerCase().includes("guide")) return "📖";
+  if (name.toLowerCase().includes("tutorial")) return "🎓";
   return "📄";
 }
 

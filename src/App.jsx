@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DynamicSidebar from "./features/sidebar/components/DynamicSidebar";
 import MarkdownViewer from "./features/viewer/components/MarkdownViewer";
+import GitHubTokenInput from "./components/GitHubTokenInput";
 // import ThemeToggle from "./features/theme/components/ThemeToggle";
 import useExternalContent from "./features/content/hooks/useExternalContent";
 
@@ -8,6 +9,7 @@ function App() {
   const [repoUrl, setRepoUrl] = useState("");
   const [activePath, setActivePath] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [, setGithubToken] = useState(null);
 
   // Use external content hook for loading markdown files
   const { content, loading, error } = useExternalContent(repoUrl, activePath);
@@ -54,9 +56,9 @@ function App() {
                 />
               </svg>
             </button>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-              Dynamic Documentation
-            </h1>
+            <div className="flex items-center">
+              <img src="./arcane_logo.png" alt="Arcane Logo" className="h-12" />
+            </div>
           </div>
 
           <div className="flex items-center space-x-3">
@@ -99,12 +101,17 @@ function App() {
               <div className="text-center py-12">
                 <div className="text-6xl mb-4">📚</div>
                 <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Welcome to Dynamic Documentation
+                  Welcome to Arcane
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
                   Enter a GitHub repository URL above to automatically generate
                   documentation navigation from the repository structure.
                 </p>
+
+                {/* GitHub Token Input */}
+                <div className="max-w-2xl mx-auto mb-6">
+                  <GitHubTokenInput onTokenSet={setGithubToken} />
+                </div>
 
                 {!repoUrl ? (
                   <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 max-w-2xl mx-auto">
@@ -191,9 +198,25 @@ function App() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="font-medium">Error loading content</span>
+                  <span className="font-medium">
+                    {error.includes("rate limit")
+                      ? "GitHub API Rate Limit Exceeded"
+                      : "Error loading content"}
+                  </span>
                 </div>
                 <p className="mt-2 text-red-600 dark:text-red-400">{error}</p>
+                {error.includes("rate limit") && (
+                  <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                    <h4 className="text-yellow-800 dark:text-yellow-200 font-medium mb-2">
+                      What to do:
+                    </h4>
+                    <ul className="text-yellow-700 dark:text-yellow-300 text-sm space-y-1">
+                      <li>• Wait 5-10 minutes for the rate limit to reset</li>
+                      <li>• Refresh the page after waiting</li>
+                      <li>• Consider using a GitHub token for higher limits</li>
+                    </ul>
+                  </div>
+                )}
               </div>
             ) : (
               <MarkdownViewer content={content} />

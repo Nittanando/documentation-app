@@ -32,13 +32,25 @@ function useExternalContent(repoUrl, path) {
           cleanRepoUrl
             .replace("github.com", "raw.githubusercontent.com")
             .replace("/tree/master", "")
-            .replace("/blob/master", "") +
-          "/master/" +
-          path;
+            .replace("/blob/master", "") + "/master/" + path;
 
         console.log("Fetching external content from:", rawUrl);
 
-        const response = await fetch(rawUrl);
+        // Add GitHub token if available for better rate limits
+        const headers = {
+          Accept: "application/vnd.github.v3+json",
+          "User-Agent": "Arcane-Documentation-App",
+        };
+
+        const githubToken =
+          import.meta.env.VITE_GITHUB_TOKEN ||
+          window.GITHUB_TOKEN ||
+          localStorage.getItem("github_token");
+        if (githubToken && githubToken !== "ghp_your_token_here") {
+          headers["Authorization"] = `token ${githubToken}`;
+        }
+
+        const response = await fetch(rawUrl, { headers });
 
         if (!response.ok) {
           throw new Error(
